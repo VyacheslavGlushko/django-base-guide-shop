@@ -1,17 +1,50 @@
 {% load static %}
-
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}{% endblock title%}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Магазин{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-<a href="{% url 'main:product_list' %}">Логотип</a>
-    от бейс пошло
-    {% block content %}{% endblock content %}
+
+<header class="header">
+    <div class="container header__inner">
+        <a href="{% url 'main:product_list' %}" class="logo">
+            🛍️ <span>Мой Магазин</span>
+        </a>
+
+        <nav class="nav">
+            <a href="{% url 'main:product_list' %}" class="nav__link">Все товары</a>
+            {% for cat in categories %}
+                <a href="{{ cat.get_absolute_url }}" class="nav__link">{{ cat.name }}</a>
+            {% endfor %}
+        </nav>
+
+        <div class="header__actions">
+            <a href="{% url 'cart:cart_detail' %}" class="btn btn--outline cart-link">
+                🛒 Корзина
+            </a>
+            <a href="/admin/" class="btn btn--outline">Админка</a>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container footer__inner">
+        <p>© 2026 Мой Магазин. Все права защищены.</p>
+        <p>Сделано на Django 🐍</p>
+    </div>
+</footer>
+
+{% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,81 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+
+<nav class="breadcrumbs">
+    <a href="{% url 'main:product_list' %}">Главная</a>
+    <span>/</span>
+    <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+    <span>/</span>
+    <span>{{ product.name }}</span>
+</nav>
+
+<div class="product-detail">
+    <div class="product-detail__image">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+            <div class="product-detail__placeholder">Нет фото</div>
+        {% endif %}
+    </div>
+
+    <div class="product-detail__info">
+        <h1 class="product-detail__title">{{ product.name }}</h1>
+        <p class="product-detail__category">{{ product.category.name }}</p>
+
+        <p class="product-detail__price">{{ product.price }} ₽</p>
+
+        {% if product.available %}
+            <span class="badge badge--success">В наличии</span>
+
+            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="product-detail__form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <label for="id_quantity">Количество:</label>
+                    {{ cart_product_form.quantity }}
+                </div>
+                {{ cart_product_form.override }}
+                <button type="submit" class="btn btn--primary btn--large">🛒 Добавить в корзину</button>
+            </form>
+        {% else %}
+            <span class="badge badge--danger">Нет в наличии</span>
+        {% endif %}
+
+        <div class="product-detail__description">
+            <h2>Описание</h2>
+            <p>{{ product.description|default:"Описание отсутствует." }}</p>
+        </div>
+
+        <p class="product-detail__meta">
+            Добавлен: {{ product.created|date:"d.m.Y" }}
+        </p>
+    </div>
+</div>
+
+{% if related_products %}
+<section class="related">
+    <h2 class="section-title">Похожие товары</h2>
+
+    <div class="product-grid product-grid--small">
+        {% for related in related_products %}
+            <div class="product-card">
+                <a href="{{ related.get_absolute_url }}" class="product-card__link">
+                    {% if related.image %}
+                        <img src="{{ related.image.url }}" alt="{{ related.name }}" class="product-card__img">
+                    {% else %}
+                        <div class="product-card__img product-card__img--placeholder">Нет фото</div>
+                    {% endif %}
+                    <div class="product-card__body">
+                        <h3 class="product-card__title">{{ related.name }}</h3>
+                        <p class="product-card__price">{{ related.price }} ₽</p>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

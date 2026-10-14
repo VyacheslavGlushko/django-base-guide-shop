@@ -6,6 +6,7 @@ from shop import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('cart/', include('cart.urls', namespace='cart')),
     path('', include('main.urls',namespace='main')),
 ]
 

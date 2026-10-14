@@ -1,6 +1,49 @@
 {% extends 'main/base.html' %}
 
-{% block title %} Заголовок{% endblock title %}
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
+{% endblock %}
 
+{% block content %}
 
-{% block content %}Контент{% endblock content %}
+{% if category %}
+    <h1 class="page-title">{{ category.name }}</h1>
+    <p class="page-subtitle">Товары в категории</p>
+{% else %}
+    <h1 class="page-title">Все товары</h1>
+    <p class="page-subtitle">Найдено товаров: {{ products.count }}</p>
+{% endif %}
+
+{% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product-card">
+                <a href="{{ product.get_absolute_url }}" class="product-card__link">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-card__img">
+                    {% else %}
+                        <div class="product-card__img product-card__img--placeholder">Нет фото</div>
+                    {% endif %}
+
+                    <div class="product-card__body">
+                        <h3 class="product-card__title">{{ product.name }}</h3>
+                        <p class="product-card__category">{{ product.category.name }}</p>
+                        <p class="product-card__price">{{ product.price }} ₽</p>
+                    </div>
+                </a>
+
+                {% if product.available %}
+                    <span class="badge badge--success">В наличии</span>
+                {% else %}
+                    <span class="badge badge--danger">Нет в наличии</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty">
+        <p>😔 Товаров пока нет.</p>
+    </div>
+{% endif %}
+
+{% endblock %}
